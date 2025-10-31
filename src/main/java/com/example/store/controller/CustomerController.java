@@ -30,4 +30,9 @@ public class CustomerController {
     public CustomerDTO createCustomer(@RequestBody Customer customer) {
         return customerMapper.customerToCustomerDTO(customerRepository.save(customer));
     }
+
+    @GetMapping("/search")
+    public List<CustomerDTO> searchCustomers(@RequestParam String name) {
+        return customerMapper.customersToCustomerDTOs(customerRepository.findByNameContainingIgnoreCase(name));
+    }
 }
