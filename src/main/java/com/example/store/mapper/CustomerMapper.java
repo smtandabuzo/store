@@ -4,6 +4,7 @@ import com.example.store.dto.CustomerDTO;
 import com.example.store.entity.Customer;
 
 import org.mapstruct.Mapper;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 

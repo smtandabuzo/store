@@ -7,7 +7,13 @@ import com.example.store.repository.CustomerRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +27,17 @@ public class CustomerController {
     private final CustomerMapper customerMapper;
 
     @GetMapping
-    public List<CustomerDTO> getAllCustomers() {
-        return customerMapper.customersToCustomerDTOs(customerRepository.findAll());
+    public ResponseEntity<PagedModel<EntityModel<CustomerDTO>>> getAllCustomers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            PagedResourcesAssembler<CustomerDTO> pagedAssembler) {
+        
+        Page<CustomerDTO> customers = customerRepository
+                .findAll(PageRequest.of(page, size))
+                .map(customerMapper::customerToCustomerDTO);
+                
+        PagedModel<EntityModel<CustomerDTO>> pagedModel = pagedAssembler.toModel(customers);
+        return ResponseEntity.ok(pagedModel);
     }
 
     @PostMapping
